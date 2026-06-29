@@ -20,7 +20,7 @@ const quizData = [
     {
         number: "QUESTION 03 (FINAL)",
         hints: [
-            "훌륭한 교사 부부의 가르침을 받는 인물.",
+            "세상에서 가장 다정한 엄마 아빠의 사랑을 듬뿍 받는 인물.",
             "최근 가장 뜨거운 기대를 받는 인물로 꼽힘.",
             "강릉에서 태어나 첫발을 내딛는 한국의 남성."
         ],
@@ -320,9 +320,9 @@ function initEvents() {
             answerImg.src = "yulgok_yi_i.png";
             answerDesc.innerText = "신사임당의 가르침을 받아 자라나 국가의 정신적 기틀을 마련한 조선의 대표적인 학자입니다.";
         } else if (currentQuestionIndex === 2) {
-            answerTitle.innerText = "정답은 예비 부부의 '복복이'! 👶🏻💙";
+            answerTitle.innerText = "정답은 우리 아기 '복복이'! 👶🏻💙";
             answerImg.src = "baby_boy_bokbok.png";
-            answerDesc.innerText = "교사 부부의 사랑스러운 가르침을 받으며 강릉에서 태어날 세상에서 가장 기대를 모으는 남자 아기입니다!";
+            answerDesc.innerText = "엄마 아빠의 사랑을 듬뿍 받으며 강릉에서 태어날 세상에서 가장 소중하고 귀여운 남자 아기입니다!";
         }
         
         // Trigger 3D CSS Rotate Y animation
