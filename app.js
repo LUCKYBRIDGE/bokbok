@@ -334,6 +334,13 @@ function initEvents() {
     // Next Question Button
     btnNextQuestion.addEventListener("click", () => {
         feedbackOverlay.classList.remove("active");
+        
+        // Hide feedback image
+        const feedbackImgContainer = document.getElementById("feedback-image-container");
+        if (feedbackImgContainer) {
+            feedbackImgContainer.style.display = "none";
+        }
+        
         if (currentQuestionIndex < quizData.length - 1) {
             currentQuestionIndex++;
             loadQuestion(currentQuestionIndex);
@@ -447,6 +454,24 @@ function initEvents() {
             });
         });
     }
+
+    // Fullscreen button event listener
+    const btnFullscreen = document.getElementById("btn-fullscreen");
+    if (btnFullscreen && babyVideo) {
+        btnFullscreen.addEventListener("click", () => {
+            initAudio();
+            playPopSound();
+            if (babyVideo.requestFullscreen) {
+                babyVideo.requestFullscreen();
+            } else if (babyVideo.webkitRequestFullscreen) { /* Safari */
+                babyVideo.webkitRequestFullscreen();
+            } else if (babyVideo.msRequestFullscreen) { /* IE11 */
+                babyVideo.msRequestFullscreen();
+            } else if (babyVideo.webkitEnterFullscreen) { /* iOS Safari fallback */
+                babyVideo.webkitEnterFullscreen();
+            }
+        });
+    }
 }
 
 // Answer Validator
@@ -458,6 +483,12 @@ function checkAnswer() {
     // Q3 is the special Gender Reveal trigger - accept anything
     if (currentQuestionIndex === 2) {
         playCorrectSound();
+        
+        // Hide feedback image to keep the surprise!
+        const feedbackImgContainer = document.getElementById("feedback-image-container");
+        if (feedbackImgContainer) {
+            feedbackImgContainer.style.display = "none";
+        }
         
         // Custom popup congratulatory feedback
         feedbackText.innerText = "오늘의 핵심 위인을 모두 공부했습니다! 참교사 스케줄러에 스탬프가 찍힙니다. 🎖️";
@@ -482,11 +513,22 @@ function checkAnswer() {
         playCorrectSound();
         errorMessage.innerText = "";
         
+        const feedbackImgContainer = document.getElementById("feedback-image-container");
+        const feedbackImg = document.getElementById("feedback-img");
+        
         // Show correct modal
         if (currentQuestionIndex === 0) {
             feedbackText.innerText = "명필 한석봉(한호)에 대해 완벽하게 마스터하셨습니다! ✏️";
+            if (feedbackImg && feedbackImgContainer) {
+                feedbackImg.src = "han_seok_bong.png";
+                feedbackImgContainer.style.display = "flex";
+            }
         } else if (currentQuestionIndex === 1) {
             feedbackText.innerText = "강릉이 낳은 위대한 현인 율곡 이이에 대해 완벽하게 공부하셨습니다! 🌾";
+            if (feedbackImg && feedbackImgContainer) {
+                feedbackImg.src = "yulgok_yi_i.png";
+                feedbackImgContainer.style.display = "flex";
+            }
         }
         feedbackOverlay.classList.add("active");
     } else {

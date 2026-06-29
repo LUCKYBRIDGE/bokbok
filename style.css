@@ -820,3 +820,25 @@ body {
     display: block;
     object-fit: contain;
 }
+
+.btn-video-action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 8px;
+    padding: 10px;
+    width: 100%;
+    font-size: 13px;
+    font-weight: bold;
+    background-color: #FFF;
+    border: 2px solid #4A3B32;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-video-action:active {
+    background-color: #FAF8F2;
+    transform: translateY(1px);
+}

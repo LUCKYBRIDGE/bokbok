@@ -116,6 +116,9 @@
             <div class="feedback-overlay" id="feedback-overlay">
                 <div class="feedback-modal">
                     <div class="feedback-icon">🎉</div>
+                    <div class="feedback-image-container" id="feedback-image-container" style="display: none; justify-content: center; margin-bottom: 12px;">
+                        <img id="feedback-img" src="" alt="인물 이미지" style="width: 100%; max-width: 160px; border-radius: 16px; border: 3px solid #4A3B32; box-shadow: 0 4px 10px rgba(0,0,0,0.08);">
+                    </div>
                     <h3>참 잘했어요!</h3>
                     <p id="feedback-text">정답입니다!</p>
                     <button id="btn-next-question" class="btn btn-primary">다음 문제 풀기 ➡️</button>
@@ -183,33 +186,8 @@
                 </div>
                 
                 <div class="baby-illustration">
-                    <!-- Cute Baby Boy SVG Illustration -->
-                    <svg viewBox="0 0 200 200" width="160" height="160">
-                        <circle cx="100" cy="100" r="90" fill="#E8F1F5"/>
-                        <!-- Hair -->
-                        <path d="M 60 70 Q 100 30 140 70 Q 120 45 100 50 Q 80 45 60 70 Z" fill="#6C5A49" stroke="#4A3B32" stroke-width="4"/>
-                        <path d="M 90 50 Q 100 35 105 48" fill="none" stroke="#6C5A49" stroke-width="4" stroke-linecap="round"/>
-                        <!-- Ears -->
-                        <circle cx="50" cy="100" r="14" fill="#FFE5D9" stroke="#4A3B32" stroke-width="4"/>
-                        <circle cx="150" cy="100" r="14" fill="#FFE5D9" stroke="#4A3B32" stroke-width="4"/>
-                        <!-- Face -->
-                        <circle cx="100" cy="104" r="50" fill="#FFE5D9" stroke="#4A3B32" stroke-width="4"/>
-                        <!-- Cheeks -->
-                        <circle cx="70" cy="115" r="8" fill="#FF9E9E" opacity="0.6"/>
-                        <circle cx="130" cy="115" r="8" fill="#FF9E9E" opacity="0.6"/>
-                        <!-- Eyes -->
-                        <path d="M 75 98 Q 83 90 91 98" fill="none" stroke="#4A3B32" stroke-width="5" stroke-linecap="round"/>
-                        <path d="M 109 98 Q 117 90 125 98" fill="none" stroke="#4A3B32" stroke-width="5" stroke-linecap="round"/>
-                        <!-- Cute Smile -->
-                        <path d="M 94 122 Q 100 130 106 122" fill="none" stroke="#4A3B32" stroke-width="5" stroke-linecap="round"/>
-                        <!-- Cute Pacifier -->
-                        <path d="M 88 120 Q 88 135 100 135 Q 112 135 112 120 Z" fill="#90E0EF" stroke="#4A3B32" stroke-width="4"/>
-                        <circle cx="100" cy="120" r="8" fill="#00B4D8" stroke="#4A3B32" stroke-width="3"/>
-                        <path d="M 93 133 Q 100 148 107 133" fill="none" stroke="#0077B6" stroke-width="3"/>
-                        <!-- Cute Blue Beanie/Hat -->
-                        <path d="M 52 85 Q 100 45 148 85 Q 140 85 100 85 Q 60 85 52 85 Z" fill="#90E0EF" stroke="#4A3B32" stroke-width="4"/>
-                        <circle cx="100" cy="50" r="10" fill="#FFF" stroke="#4A3B32" stroke-width="4"/>
-                    </svg>
+                    <!-- Cute Baby Boy Generated Image -->
+                    <img src="baby_boy_bokbok.png" alt="귀여운 남자 아기 복복이" style="width: 150px; height: 150px; border-radius: 50%; border: 4px solid #4A3B32; box-shadow: 0 6px 12px rgba(74, 59, 50, 0.12); object-fit: cover; display: block;">
                 </div>
 
                 <div class="reveal-content-card">
@@ -229,6 +207,7 @@
                                 귀하의 브라우저는 비디오 태그를 지원하지 않습니다.
                             </video>
                         </div>
+                        <button id="btn-fullscreen" class="btn-video-action">전체화면으로 크게 보기 📺</button>
                     </div>
 
                     <div class="letter-box">
