@@ -22,7 +22,7 @@ const quizData = [
         hints: [
             "세상에서 가장 다정한 엄마 아빠의 사랑을 듬뿍 받는 인물.",
             "최근 가장 뜨거운 기대를 받는 인물로 꼽힘.",
-            "강릉에서 태어나 첫발을 내딛는 한국의 남성."
+            "엄마 아빠의 사랑을 가득 받고 태어날 소중한 남자 아기.",
         ],
         answers: [] // 3번은 플래시카드 뒤집으면 감동의 젠더 리빌로 이어집니다!
     }
@@ -322,7 +322,7 @@ function initEvents() {
         } else if (currentQuestionIndex === 2) {
             answerTitle.innerText = "정답은 우리 아기 '복복이'! 👶🏻💙";
             answerImg.src = "baby_boy_bokbok.png";
-            answerDesc.innerText = "엄마 아빠의 사랑을 듬뿍 받으며 강릉에서 태어날 세상에서 가장 소중하고 귀여운 남자 아기입니다!";
+            answerDesc.innerText = "엄마 아빠의 사랑을 가득 받고 태어날 세상에서 가장 소중하고 귀여운 남자 아기입니다! 👶🏻💙";
         }
         
         // Trigger 3D CSS Rotate Y animation
