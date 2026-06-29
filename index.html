@@ -89,40 +89,42 @@
 
             <div class="quiz-card-wrapper">
                 <div class="quiz-card" id="quiz-card">
-                    <div class="card-top">
-                        <span class="card-number-badge" id="question-number">QUESTION 01</span>
+                    <!-- FRONT OF CARD -->
+                    <div class="card-front">
+                        <div class="card-top">
+                            <span class="card-number-badge" id="question-number">QUESTION 01</span>
+                        </div>
+                        <div class="card-body">
+                            <h2 class="card-question-title">다음 힌트를 보고<br>머릿속으로 <strong class="highlight">역사 인물</strong>을 맞춰보세요!</h2>
+                            <div class="hints-container" id="hints-container">
+                                <!-- Hints will be injected dynamically, hidden initially -->
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <span class="hint-count-status" id="hint-count-text">공개된 힌트: 1 / 2</span>
+                        </div>
                     </div>
                     
-                    <div class="card-body">
-                        <h2 class="card-question-title">다음 힌트가 가리키는<br><strong class="highlight">역사 인물</strong>은 누구일까요?</h2>
-                        
-                        <div class="hints-container" id="hints-container">
-                            <!-- Hints will be injected dynamically -->
+                    <!-- BACK OF CARD -->
+                    <div class="card-back">
+                        <div class="card-top">
+                            <span class="card-number-badge correct">CORRECT ANSWER 🌟</span>
+                        </div>
+                        <div class="card-body back-body">
+                            <h2 class="card-answer-title" id="card-answer-title">정답은 한석봉!</h2>
+                            <div class="answer-image-container">
+                                <img id="answer-img" src="han_seok_bong.png" alt="정답 이미지">
+                            </div>
+                            <p class="answer-description" id="answer-description">설명글이 들어갑니다.</p>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="input-area">
-                <div class="input-wrapper">
-                    <input type="text" id="quiz-input" placeholder="정답을 입력해 주세요" autocomplete="off" autofocus>
-                    <button id="btn-clear" class="btn-clear" style="display: none;">&times;</button>
-                </div>
-                <p class="error-msg" id="error-message"></p>
-                <button id="btn-submit" class="btn btn-primary">정답 확인하기 💡</button>
-            </div>
-            
-            <!-- Custom modal for correct answer feedback -->
-            <div class="feedback-overlay" id="feedback-overlay">
-                <div class="feedback-modal">
-                    <div class="feedback-icon">🎉</div>
-                    <div class="feedback-image-container" id="feedback-image-container" style="display: none; justify-content: center; margin-bottom: 12px;">
-                        <img id="feedback-img" src="" alt="인물 이미지" style="width: 100%; max-width: 160px; border-radius: 16px; border: 3px solid #4A3B32; box-shadow: 0 4px 10px rgba(0,0,0,0.08);">
-                    </div>
-                    <h3>참 잘했어요!</h3>
-                    <p id="feedback-text">정답입니다!</p>
-                    <button id="btn-next-question" class="btn btn-primary">다음 문제 풀기 ➡️</button>
-                </div>
+                <button id="btn-next-hint" class="btn btn-secondary">다음 힌트 보기 💡</button>
+                <button id="btn-flip-card" class="btn btn-primary" style="margin-top: 12px;">정답 확인하기 (카드 뒤집기) 🔄</button>
+                <button id="btn-next-question" class="btn btn-primary" style="display: none;">다음 문제 풀기 ➡️</button>
             </div>
         </section>
 

@@ -24,15 +24,15 @@ const quizData = [
             "최근 가장 뜨거운 기대를 받는 인물로 꼽힘.",
             "강릉에서 태어나 첫발을 내딛는 한국의 남성."
         ],
-        answers: [] // 3번은 어떤 답을 적어도 무조건 감동의 젠더 리빌 페이지로 전환!
+        answers: [] // 3번은 플래시카드 뒤집으면 감동의 젠더 리빌로 이어집니다!
     }
 ];
 
 // App State Variables
 let currentQuestionIndex = 0;
+let hintsRevealedCount = 1;
 let soundEnabled = true;
 let audioCtx = null;
-let consecutiveWrongAnswers = 0;
 
 // DOM Elements
 const screenWelcome = document.getElementById("screen-welcome");
@@ -41,23 +41,25 @@ const screenReveal = document.getElementById("screen-reveal");
 
 const btnStart = document.getElementById("btn-start");
 const btnSoundToggle = document.getElementById("btn-sound-toggle");
-const btnSubmit = document.getElementById("btn-submit");
-const btnClear = document.getElementById("btn-clear");
+const btnNextHint = document.getElementById("btn-next-hint");
+const btnFlipCard = document.getElementById("btn-flip-card");
 const btnNextQuestion = document.getElementById("btn-next-question");
+
 const btnGoGift = document.getElementById("btn-go-gift");
 const btnPopAgain = document.getElementById("btn-pop-again");
 const btnShare = document.getElementById("btn-share");
 
-const quizInput = document.getElementById("quiz-input");
-const errorMessage = document.getElementById("error-message");
 const quizProgressFill = document.getElementById("quiz-progress-fill");
 const progressPencil = document.getElementById("progress-pencil");
 const quizStepText = document.getElementById("quiz-step-text");
 const questionNumber = document.getElementById("question-number");
 const hintsContainer = document.getElementById("hints-container");
-const feedbackOverlay = document.getElementById("feedback-overlay");
-const feedbackText = document.getElementById("feedback-text");
+const hintCountText = document.getElementById("hint-count-text");
 const quizCard = document.getElementById("quiz-card");
+
+const answerTitle = document.getElementById("card-answer-title");
+const answerImg = document.getElementById("answer-img");
+const answerDesc = document.getElementById("answer-description");
 
 const revealIntro = document.getElementById("reveal-intro");
 const revealGift = document.getElementById("reveal-gift");
@@ -101,34 +103,6 @@ function playCorrectSound() {
         osc.start(now + index * gap);
         osc.stop(now + index * gap + duration);
     });
-}
-
-function playIncorrectSound() {
-    if (!soundEnabled) return;
-    initAudio();
-    const now = audioCtx.currentTime;
-    
-    const osc = audioCtx.createOscillator();
-    const gainNode = audioCtx.createGain();
-    const filter = audioCtx.createBiquadFilter();
-    
-    // Low frequency buzz slide
-    osc.type = 'sawtooth';
-    osc.frequency.setValueAtTime(160, now);
-    osc.frequency.linearRampToValueAtTime(110, now + 0.35);
-    
-    filter.type = 'bandpass';
-    filter.frequency.setValueAtTime(220, now);
-    
-    gainNode.gain.setValueAtTime(0.3, now);
-    gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
-    
-    osc.connect(filter);
-    filter.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
-    
-    osc.start(now);
-    osc.stop(now + 0.35);
 }
 
 function playPopSound() {
@@ -182,7 +156,6 @@ function playFanfareSound() {
     });
 }
 
-// Sparkle/Chime sound for hint triggers
 function playChimeSound() {
     if (!soundEnabled) return;
     initAudio();
@@ -192,17 +165,17 @@ function playChimeSound() {
     const gainNode = audioCtx.createGain();
     
     osc.type = 'sine';
-    osc.frequency.setValueAtTime(1500, now);
-    osc.frequency.exponentialRampToValueAtTime(1000, now + 0.15);
+    osc.frequency.setValueAtTime(1200, now);
+    osc.frequency.exponentialRampToValueAtTime(800, now + 0.12);
     
-    gainNode.gain.setValueAtTime(0.1, now);
-    gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+    gainNode.gain.setValueAtTime(0.12, now);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
     
     osc.connect(gainNode);
     gainNode.connect(audioCtx.destination);
     
     osc.start(now);
-    osc.stop(now + 0.15);
+    osc.stop(now + 0.12);
 }
 
 // Confetti Explosion
@@ -254,20 +227,17 @@ function loadQuestion(index) {
     quizProgressFill.style.width = `${percentage}%`;
     progressPencil.style.left = `calc(${percentage}% - 8px)`;
     
-    // Clear Input and Errors
-    quizInput.value = "";
-    quizInput.placeholder = index === 2 ? "자유롭게 입력해 주세요" : "정답을 입력해 주세요";
-    errorMessage.innerText = "";
-    btnClear.style.display = "none";
+    // Reset hint state
+    hintsRevealedCount = 1;
     
-    // Render Hints with Staggered Delays
+    // Render Hints
     hintsContainer.innerHTML = "";
     data.hints.forEach((hintText, hintIndex) => {
         const hintDiv = document.createElement("div");
-        hintDiv.className = "hint-item";
-        hintDiv.style.animationDelay = `${hintIndex * 0.35}s`;
+        // Only first hint is visible, rest are hidden initially
+        hintDiv.className = `hint-item ${hintIndex >= hintsRevealedCount ? 'hidden' : ''}`;
         
-        // Bullet icons: Q1, Q2 are study icons, Q3 final question hints are hearts/stars
+        // Bullet icons: Q3 has stars, Q1 & Q2 have study lightbulbs
         const bulletIcon = index === 2 ? "✨" : "💡";
         
         hintDiv.innerHTML = `
@@ -277,13 +247,22 @@ function loadQuestion(index) {
         hintsContainer.appendChild(hintDiv);
     });
 
-    // Reset wrong answer count
-    consecutiveWrongAnswers = 0;
+    updateHintControls();
+}
+
+function updateHintControls() {
+    const data = quizData[currentQuestionIndex];
+    const total = data.hints.length;
     
-    // Auto-focus input
-    setTimeout(() => {
-        quizInput.focus();
-    }, 400);
+    // Update footer status text
+    hintCountText.innerText = `공개된 힌트: ${hintsRevealedCount} / ${total}`;
+    
+    // Show/Hide Next Hint Button
+    if (hintsRevealedCount >= total) {
+        btnNextHint.style.display = "none";
+    } else {
+        btnNextHint.style.display = "block";
+    }
 }
 
 // Event Listeners Initialization
@@ -308,44 +287,80 @@ function initEvents() {
         }
     });
 
-    // Handle Input clear button visibility
-    quizInput.addEventListener("input", () => {
-        if (quizInput.value.length > 0) {
-            btnClear.style.display = "block";
-        } else {
-            btnClear.style.display = "none";
+    // Next Hint Action
+    btnNextHint.addEventListener("click", () => {
+        const data = quizData[currentQuestionIndex];
+        if (hintsRevealedCount < data.hints.length) {
+            hintsRevealedCount++;
+            playChimeSound();
+            
+            // Remove hidden class from the newly revealed hint
+            const hintItems = hintsContainer.querySelectorAll(".hint-item");
+            if (hintItems[hintsRevealedCount - 1]) {
+                hintItems[hintsRevealedCount - 1].classList.remove("hidden");
+            }
+            
+            updateHintControls();
         }
     });
 
-    btnClear.addEventListener("click", () => {
-        quizInput.value = "";
-        btnClear.style.display = "none";
-        quizInput.focus();
-    });
-
-    // Answer Submission
-    btnSubmit.addEventListener("click", checkAnswer);
-    quizInput.addEventListener("keypress", (e) => {
-        if (e.key === "Enter") {
-            checkAnswer();
-        }
-    });
-
-    // Next Question Button
-    btnNextQuestion.addEventListener("click", () => {
-        feedbackOverlay.classList.remove("active");
+    // Flip Card / Show Answer Action
+    btnFlipCard.addEventListener("click", () => {
+        playCorrectSound();
         
-        // Hide feedback image
-        const feedbackImgContainer = document.getElementById("feedback-image-container");
-        if (feedbackImgContainer) {
-            feedbackImgContainer.style.display = "none";
+        const data = quizData[currentQuestionIndex];
+        
+        // Setup Card Back Content dynamically
+        if (currentQuestionIndex === 0) {
+            answerTitle.innerText = "정답은 한석봉 (한호) ✏️";
+            answerImg.src = "han_seok_bong.png";
+            answerDesc.innerText = "어머니가 불을 끄고 떡을 써는 동안 명필 글씨를 쓴 실화로 유명한 조선 최고의 서예가입니다.";
+        } else if (currentQuestionIndex === 1) {
+            answerTitle.innerText = "정답은 율곡 이이 🌾";
+            answerImg.src = "yulgok_yi_i.png";
+            answerDesc.innerText = "신사임당의 가르침을 받아 자라나 국가의 정신적 기틀을 마련한 조선의 대표적인 학자입니다.";
+        } else if (currentQuestionIndex === 2) {
+            answerTitle.innerText = "정답은 예비 부부의 '복복이'! 👶🏻💙";
+            answerImg.src = "baby_boy_bokbok.png";
+            answerDesc.innerText = "교사 부부의 사랑스러운 가르침을 받으며 강릉에서 태어날 세상에서 가장 기대를 모으는 남자 아기입니다!";
         }
+        
+        // Trigger 3D CSS Rotate Y animation
+        quizCard.classList.add("flipped");
+        
+        // Adjust control buttons
+        btnNextHint.style.display = "none";
+        btnFlipCard.style.display = "none";
+        btnNextQuestion.style.display = "block";
+        
+        if (currentQuestionIndex === 2) {
+            btnNextQuestion.innerText = "특별 알림장 확인하기 💌";
+        } else {
+            btnNextQuestion.innerText = "다음 문제 풀기 ➡️";
+        }
+    });
+
+    // Next Question Action
+    btnNextQuestion.addEventListener("click", () => {
+        initAudio();
         
         if (currentQuestionIndex < quizData.length - 1) {
-            currentQuestionIndex++;
-            loadQuestion(currentQuestionIndex);
+            // 1. Flip card back first
+            quizCard.classList.remove("flipped");
+            playPopSound();
+            
+            // 2. Wait for flip animation (600ms) then load new question
+            setTimeout(() => {
+                currentQuestionIndex++;
+                loadQuestion(currentQuestionIndex);
+                
+                // Reset buttons
+                btnFlipCard.style.display = "block";
+                btnNextQuestion.style.display = "none";
+            }, 600);
         } else {
-            // End of Quiz - Go to Reveal Intro
+            // End of Quiz: Go to Gender Reveal screen
+            playCorrectSound();
             switchScreen(screenQuiz, screenReveal);
             revealIntro.classList.add("active");
         }
@@ -360,22 +375,16 @@ function initEvents() {
 
     // Gift Box Open Click Trigger
     giftBoxTrigger.addEventListener("click", () => {
-        // Shake/Animate Box opening
         const svgBox = giftBoxTrigger.querySelector(".gift-box");
-        svgBox.style.animation = "none"; // Clear pulse animation
+        svgBox.style.animation = "none"; // Stop floating pulse
         
-        // Add Popping Animation Class
         giftBoxTrigger.classList.add("popped");
-        
-        // Play special effects
         playPopSound();
         
-        // Short delay for visual popping build up
         setTimeout(() => {
             playFanfareSound();
             triggerConfetti();
             
-            // Switch views inside Reveal screen
             revealGift.classList.remove("active");
             revealResult.classList.add("active");
             
@@ -389,7 +398,6 @@ function initEvents() {
                 }, 600);
             }
             
-            // Trigger haptic feedback if supported
             if (navigator.vibrate) {
                 navigator.vibrate([100, 50, 200]);
             }
@@ -429,28 +437,20 @@ function initEvents() {
     if (tabBtns.length > 0 && babyVideo) {
         tabBtns.forEach(btn => {
             btn.addEventListener("click", () => {
-                // Remove active class from all buttons
                 tabBtns.forEach(b => b.classList.remove("active"));
-                
-                // Add active class to clicked button
                 btn.classList.add("active");
                 
-                // Change video source and play
                 const videoSrc = btn.getAttribute("data-video");
                 
-                // Pause current video
                 babyVideo.pause();
-                
-                // Update source
                 babyVideo.src = videoSrc;
                 babyVideo.load();
                 
-                // Play
                 babyVideo.play().catch(err => {
                     console.log("Video playback prevented: ", err);
                 });
                 
-                playPopSound(); // Play cute feedback click sound
+                playPopSound();
             });
         });
     }
@@ -474,88 +474,7 @@ function initEvents() {
     }
 }
 
-// Answer Validator
-function checkAnswer() {
-    const rawInput = quizInput.value;
-    const userAnswer = rawInput.trim().replace(/\s+/g, ""); // Remove spaces
-    const data = quizData[currentQuestionIndex];
-    
-    // Q3 is the special Gender Reveal trigger - accept anything
-    if (currentQuestionIndex === 2) {
-        playCorrectSound();
-        
-        // Hide feedback image to keep the surprise!
-        const feedbackImgContainer = document.getElementById("feedback-image-container");
-        if (feedbackImgContainer) {
-            feedbackImgContainer.style.display = "none";
-        }
-        
-        // Custom popup congratulatory feedback
-        feedbackText.innerText = "오늘의 핵심 위인을 모두 공부했습니다! 참교사 스케줄러에 스탬프가 찍힙니다. 🎖️";
-        feedbackOverlay.classList.add("active");
-        return;
-    }
-    
-    // Regular validation for Q1 and Q2
-    if (!userAnswer) {
-        errorMessage.innerText = "정답을 적어 주세요!";
-        shakeCard();
-        playIncorrectSound();
-        return;
-    }
-    
-    const isCorrect = data.answers.some(ans => {
-        const normalizedAns = ans.trim().replace(/\s+/g, "");
-        return userAnswer === normalizedAns || userAnswer.includes(normalizedAns);
-    });
-    
-    if (isCorrect) {
-        playCorrectSound();
-        errorMessage.innerText = "";
-        
-        const feedbackImgContainer = document.getElementById("feedback-image-container");
-        const feedbackImg = document.getElementById("feedback-img");
-        
-        // Show correct modal
-        if (currentQuestionIndex === 0) {
-            feedbackText.innerText = "명필 한석봉(한호)에 대해 완벽하게 마스터하셨습니다! ✏️";
-            if (feedbackImg && feedbackImgContainer) {
-                feedbackImg.src = "han_seok_bong.png";
-                feedbackImgContainer.style.display = "flex";
-            }
-        } else if (currentQuestionIndex === 1) {
-            feedbackText.innerText = "강릉이 낳은 위대한 현인 율곡 이이에 대해 완벽하게 공부하셨습니다! 🌾";
-            if (feedbackImg && feedbackImgContainer) {
-                feedbackImg.src = "yulgok_yi_i.png";
-                feedbackImgContainer.style.display = "flex";
-            }
-        }
-        feedbackOverlay.classList.add("active");
-    } else {
-        playIncorrectSound();
-        consecutiveWrongAnswers++;
-        shakeCard();
-        
-        if (consecutiveWrongAnswers >= 3) {
-            errorMessage.innerText = `힌트가 부족한가요? 정답은 [${data.answers[0]}] 이에요! 한번 적어보세요. 😉`;
-        } else {
-            errorMessage.innerText = "앗, 오답이에요! 힌트를 꼼꼼히 다시 읽어보세요. 🥺";
-        }
-    }
-}
-
-function shakeCard() {
-    quizCard.classList.add("shake");
-    setTimeout(() => {
-        quizCard.classList.remove("shake");
-    }, 450);
-}
-
 // Initialize on DOM load
 window.addEventListener("DOMContentLoaded", () => {
     initEvents();
-    
-    // If we want audio consent button to display initially
-    // Check if autoplay is blocked or setup lazy loading
-    // In this app, we initialize audio context directly on user clicks (Start button, check answer, etc.)
 });
