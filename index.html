@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>하루 3분! 초등 역사 인물 탐험</title>
+    <!-- Google Fonts: Fredoka (Cute English/Numbers), Gowun Dodum (Neat Korean), Nanum Pen Script (Handwriting) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Gowun+Dodum&family=Nanum+Pen+Script&display=swap" rel="stylesheet">
+    <!-- Style Sheet -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+    <div class="mobile-container">
+        <!-- SCREEN 1: WELCOME SCREEN -->
+        <section id="screen-welcome" class="screen active">
+            <div class="app-header">
+                <span class="badge">초등 사회 3-4학년 교과 연계</span>
+                <span class="stamp">참교사 추천 🌟</span>
+            </div>
+            
+            <div class="welcome-content">
+                <div class="character-wrapper">
+                    <!-- Cute Pencil & Book SVG Character -->
+                    <svg class="main-char" viewBox="0 0 200 200" width="150" height="150">
+                        <!-- Book Background -->
+                        <rect x="50" y="40" width="110" height="130" rx="15" fill="#FFDE85" stroke="#4A3B32" stroke-width="6"/>
+                        <path d="M 50 155 Q 105 165 160 155" fill="none" stroke="#4A3B32" stroke-width="6"/>
+                        <rect x="62" y="55" width="86" height="90" rx="10" fill="#FFF" />
+                        <!-- Pencil -->
+                        <g class="floating-pencil">
+                            <path d="M 30 110 L 30 50 L 45 30 L 60 50 L 60 110 Z" fill="#FF8E9E" stroke="#4A3B32" stroke-width="5"/>
+                            <path d="M 45 30 L 41 40 L 49 40 Z" fill="#4A3B32"/>
+                            <rect x="30" y="95" width="30" height="15" fill="#FFBCBC"/>
+                            <!-- Pencil Eyes -->
+                            <circle cx="40" cy="65" r="3" fill="#4A3B32"/>
+                            <circle cx="50" cy="65" r="3" fill="#4A3B32"/>
+                            <!-- Pencil Smile -->
+                            <path d="M 42 73 Q 45 77 48 73" fill="none" stroke="#4A3B32" stroke-width="3" stroke-linecap="round"/>
+                        </g>
+                        <!-- Book Eyes -->
+                        <circle cx="95" cy="95" r="6" fill="#4A3B32"/>
+                        <circle cx="125" cy="95" r="6" fill="#4A3B32"/>
+                        <!-- Blushing cheeks -->
+                        <circle cx="85" cy="105" r="7" fill="#FF9E9E" opacity="0.6"/>
+                        <circle cx="135" cy="105" r="7" fill="#FF9E9E" opacity="0.6"/>
+                        <!-- Book Smile -->
+                        <path d="M 105 110 Q 110 118 115 110" fill="none" stroke="#4A3B32" stroke-width="5" stroke-linecap="round"/>
+                        <!-- Academic Cap -->
+                        <path d="M 80 30 L 130 15 L 180 30 L 130 45 Z" fill="#4A4E69" stroke="#4A3B32" stroke-width="5"/>
+                        <rect x="110" y="38" width="40" height="15" fill="#4A4E69" stroke="#4A3B32" stroke-width="4"/>
+                        <path d="M 170 30 L 175 60 L 170 63" fill="none" stroke="#FFDE85" stroke-width="3"/>
+                    </svg>
+                </div>
+                
+                <h1 class="title">하루 3분!<br><span class="highlight">역사 인물 탐험</span> 🚀</h1>
+                <p class="description">교과서 속 핵심 위인들을 퀴즈로 만나는 시간!<br>오늘의 진도를 완료하고 스탬프를 받으세요.</p>
+                
+                <div class="progress-box">
+                    <div class="progress-info">
+                        <span>오늘의 학습 진도</span>
+                        <strong class="progress-percent">0%</strong>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" style="width: 0%;"></div>
+                    </div>
+                    <span class="progress-status">총 3문항 중 0문항 완료</span>
+                </div>
+                
+                <button id="btn-start" class="btn btn-primary bounce">오늘의 학습 시작하기 ✏️</button>
+            </div>
+        </section>
+
+        <!-- SCREEN 2: QUIZ SCREEN -->
+        <section id="screen-quiz" class="screen">
+            <div class="quiz-header">
+                <button id="btn-sound-toggle" class="btn-icon" aria-label="음소거 토글">🔊</button>
+                <div class="quiz-progress-container">
+                    <span class="quiz-step" id="quiz-step-text">Q1 / 3</span>
+                    <div class="progress-bar-bg small">
+                        <div class="progress-bar-fill" id="quiz-progress-fill" style="width: 33.3%;"></div>
+                        <span class="progress-pencil-icon" id="progress-pencil">✏️</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="quiz-card-wrapper">
+                <div class="quiz-card" id="quiz-card">
+                    <div class="card-top">
+                        <span class="card-number-badge" id="question-number">QUESTION 01</span>
+                    </div>
+                    
+                    <div class="card-body">
+                        <h2 class="card-question-title">다음 힌트가 가리키는<br><strong class="highlight">역사 인물</strong>은 누구일까요?</h2>
+                        
+                        <div class="hints-container" id="hints-container">
+                            <!-- Hints will be injected dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-area">
+                <div class="input-wrapper">
+                    <input type="text" id="quiz-input" placeholder="정답을 입력해 주세요" autocomplete="off" autofocus>
+                    <button id="btn-clear" class="btn-clear" style="display: none;">&times;</button>
+                </div>
+                <p class="error-msg" id="error-message"></p>
+                <button id="btn-submit" class="btn btn-primary">정답 확인하기 💡</button>
+            </div>
+            
+            <!-- Custom modal for correct answer feedback -->
+            <div class="feedback-overlay" id="feedback-overlay">
+                <div class="feedback-modal">
+                    <div class="feedback-icon">🎉</div>
+                    <h3>참 잘했어요!</h3>
+                    <p id="feedback-text">정답입니다!</p>
+                    <button id="btn-next-question" class="btn btn-primary">다음 문제 풀기 ➡️</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 3: REVEAL SCREEN -->
+        <section id="screen-reveal" class="screen">
+            <!-- Interstitial Transition View: "Special Notification!" -->
+            <div id="reveal-intro" class="reveal-intro active">
+                <div class="bell-animation">🔔</div>
+                <h2 class="intro-title">딩동댕! 퀴즈 완료!</h2>
+                <div class="badge-success">학습 완료율 100% 🎓</div>
+                <p class="intro-desc">
+                    축하합니다! 오늘의 역사 인물 공부가 완료되었습니다.<br>
+                    어랏...? <strong>참교사 부부</strong>로부터 특별한 메시지가 도착했네요!
+                </p>
+                <button id="btn-go-gift" class="btn btn-primary">특별 메시지 확인하기 💌</button>
+            </div>
+
+            <!-- Gift box cracking open view -->
+            <div id="reveal-gift" class="reveal-gift">
+                <h2 class="gift-title">비밀 상자를 열어보세요!</h2>
+                <p class="gift-subtitle">화면의 상자를 탭(클릭)하면 비밀이 공개됩니다.</p>
+                
+                <div class="gift-box-container" id="gift-box-trigger">
+                    <div class="sparkles-container">
+                        <span class="sparkle s1">✨</span>
+                        <span class="sparkle s2">✨</span>
+                        <span class="sparkle s3">✨</span>
+                        <span class="sparkle s4">💖</span>
+                        <span class="sparkle s5">🍼</span>
+                    </div>
+                    <!-- Cute SVG Gift Box -->
+                    <svg class="gift-box" viewBox="0 0 200 200" width="180" height="180">
+                        <defs>
+                            <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+                                <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="#4a3b32" flood-opacity="0.15"/>
+                            </filter>
+                        </defs>
+                        <!-- Box Body -->
+                        <rect x="40" y="80" width="120" height="100" rx="10" fill="#FFDE85" stroke="#4A3B32" stroke-width="6" filter="url(#shadow)"/>
+                        <!-- Ribbon Vertical -->
+                        <rect x="90" y="80" width="20" height="100" fill="#FF8E9E" stroke="#4A3B32" stroke-width="4"/>
+                        <!-- Box Lid -->
+                        <rect x="30" y="55" width="140" height="30" rx="6" fill="#FFEBB3" stroke="#4A3B32" stroke-width="6"/>
+                        <!-- Ribbon Lid Vertical -->
+                        <rect x="90" y="55" width="20" height="30" fill="#FF8E9E" stroke="#4A3B32" stroke-width="4"/>
+                        <!-- Ribbon Bow Left -->
+                        <path d="M 100 55 C 70 20, 60 50, 100 55" fill="#FF8E9E" stroke="#4A3B32" stroke-width="5" stroke-linejoin="round"/>
+                        <!-- Ribbon Bow Right -->
+                        <path d="M 100 55 C 130 20, 140 50, 100 55" fill="#FF8E9E" stroke="#4A3B32" stroke-width="5" stroke-linejoin="round"/>
+                        <!-- Heart Decor in center -->
+                        <path d="M 100 120 C 100 120, 85 105, 85 95 C 85 88, 92 85, 100 92 C 108 85, 115 88, 115 95 C 115 105, 100 120, 100 120 Z" fill="#FF8E9E" stroke="#4A3B32" stroke-width="3"/>
+                    </svg>
+                    <div class="tap-guide">TAP ME! 👆</div>
+                </div>
+            </div>
+
+            <!-- Final Gender Reveal View -->
+            <div id="reveal-result" class="reveal-result">
+                <div class="reveal-header">
+                    <span class="celebration-badge">IT'S A BOY! 🍼</span>
+                </div>
+                
+                <div class="baby-illustration">
+                    <!-- Cute Baby Boy SVG Illustration -->
+                    <svg viewBox="0 0 200 200" width="160" height="160">
+                        <circle cx="100" cy="100" r="90" fill="#E8F1F5"/>
+                        <!-- Hair -->
+                        <path d="M 60 70 Q 100 30 140 70 Q 120 45 100 50 Q 80 45 60 70 Z" fill="#6C5A49" stroke="#4A3B32" stroke-width="4"/>
+                        <path d="M 90 50 Q 100 35 105 48" fill="none" stroke="#6C5A49" stroke-width="4" stroke-linecap="round"/>
+                        <!-- Ears -->
+                        <circle cx="50" cy="100" r="14" fill="#FFE5D9" stroke="#4A3B32" stroke-width="4"/>
+                        <circle cx="150" cy="100" r="14" fill="#FFE5D9" stroke="#4A3B32" stroke-width="4"/>
+                        <!-- Face -->
+                        <circle cx="100" cy="104" r="50" fill="#FFE5D9" stroke="#4A3B32" stroke-width="4"/>
+                        <!-- Cheeks -->
+                        <circle cx="70" cy="115" r="8" fill="#FF9E9E" opacity="0.6"/>
+                        <circle cx="130" cy="115" r="8" fill="#FF9E9E" opacity="0.6"/>
+                        <!-- Eyes -->
+                        <path d="M 75 98 Q 83 90 91 98" fill="none" stroke="#4A3B32" stroke-width="5" stroke-linecap="round"/>
+                        <path d="M 109 98 Q 117 90 125 98" fill="none" stroke="#4A3B32" stroke-width="5" stroke-linecap="round"/>
+                        <!-- Cute Smile -->
+                        <path d="M 94 122 Q 100 130 106 122" fill="none" stroke="#4A3B32" stroke-width="5" stroke-linecap="round"/>
+                        <!-- Cute Pacifier -->
+                        <path d="M 88 120 Q 88 135 100 135 Q 112 135 112 120 Z" fill="#90E0EF" stroke="#4A3B32" stroke-width="4"/>
+                        <circle cx="100" cy="120" r="8" fill="#00B4D8" stroke="#4A3B32" stroke-width="3"/>
+                        <path d="M 93 133 Q 100 148 107 133" fill="none" stroke="#0077B6" stroke-width="3"/>
+                        <!-- Cute Blue Beanie/Hat -->
+                        <path d="M 52 85 Q 100 45 148 85 Q 140 85 100 85 Q 60 85 52 85 Z" fill="#90E0EF" stroke="#4A3B32" stroke-width="4"/>
+                        <circle cx="100" cy="50" r="10" fill="#FFF" stroke="#4A3B32" stroke-width="4"/>
+                    </svg>
+                </div>
+
+                <div class="reveal-content-card">
+                    <h1 class="reveal-title">튼튼하고 멋진 <span class="text-blue">아들</span>입니다! 👶🏻💙</h1>
+                    
+                    <!-- Video Section (Growth Diary) -->
+                    <div class="video-section">
+                        <h3 class="video-section-title">📽️ 복복이의 성장 일기</h3>
+                        <div class="video-tabs">
+                            <button class="tab-btn" data-video="복복6주6일.mp4">6주 6일 💖</button>
+                            <button class="tab-btn" data-video="복복10주6일.mp4">10주 6일 🌱</button>
+                            <button class="tab-btn active" data-video="복복15주5일.mp4">15주 5일 👶🏻</button>
+                        </div>
+                        <div class="video-player-container">
+                            <video id="baby-video" controls playsinline preload="auto">
+                                <source src="복복15주5일.mp4" type="video/mp4">
+                                귀하의 브라우저는 비디오 태그를 지원하지 않습니다.
+                            </video>
+                        </div>
+                    </div>
+
+                    <div class="letter-box">
+                        <div class="letter-top">
+                            <span class="letter-stamp">💌 알림장</span>
+                        </div>
+                        <p class="letter-text">
+                            안녕하세요! 저희 예비 교사 부부에게 세상에서 가장 소중하고 사랑스러운 <strong>아들</strong>이 찾아왔습니다. 🍼<br><br>
+                            강릉에서 건강하게 태어나 첫발을 내딛을 수 있도록, 우리 아이를 향해 아낌없는 축하와 축복을 보내주시면 감사하겠습니다. 🥰<br><br>
+                            - 예비 아빠 & 엄마 드림 -
+                        </p>
+                    </div>
+
+                    <div class="reveal-actions">
+                        <button id="btn-pop-again" class="btn btn-secondary">꽃가루 한 번 더! 🎉</button>
+                        <button id="btn-share" class="btn btn-share">기쁜 소식 공유하기 🔗</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <!-- Audio permission banner (hidden by default) -->
+    <div id="audio-consent-banner" class="audio-banner" style="display: none;">
+        <span>소리 효과와 함께 퀴즈를 즐겨보세요!</span>
+        <button id="btn-allow-audio">효과음 켜기 🔊</button>
+    </div>
+
+    <!-- Script -->
+    <script src="app.js"></script>
+</body>
+</html>
