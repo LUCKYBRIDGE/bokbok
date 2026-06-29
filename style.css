@@ -855,10 +855,10 @@ body {
 
 .welcome-copyright {
     text-align: center;
-    font-size: 11px;
-    color: #7F90A0;
-    margin-top: 24px;
-    opacity: 0.6;
+    font-size: 10px;
+    color: #A0B2C1;
+    margin-top: 28px;
+    opacity: 0.35;
     font-family: sans-serif;
     letter-spacing: 0.5px;
 }
